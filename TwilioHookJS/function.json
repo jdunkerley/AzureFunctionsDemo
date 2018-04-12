@@ -2,17 +2,17 @@
   "disabled": false,
   "bindings": [
     {
+      "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "type": "httpTrigger",
       "authLevel": "anonymous",
-      "methods": ["get"],
-      "route": "demo"
+      "methods": ["post"],
+      "route": "twilio"
     },
     {
+      "type": "http",
       "direction": "out",
-      "name": "res",
-      "type": "http"
+      "name": "res"
     }
   ]
 }
