@@ -122,7 +122,6 @@ const sendTrainSearch = (startStation, endStation) => {
   post_req.end()
 }
 
-
 module.exports = (context, req) => {
   context.log('Twilio Sent A Request')
   environment.context = context
