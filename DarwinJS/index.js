@@ -40,7 +40,7 @@ function parseTrains(trainObjects, endStation) {
       }
     }
 
-    train.push(output)
+    trains.push(output)
     idx++
   }
 

@@ -7,7 +7,7 @@
       "name": "req",
       "authLevel": "anonymous",
       "methods": ["get"],
-      "route": "trains/{src:alpha}/{dest:alpha?}"
+      "route": "tb"      
     },
     {
       "type": "http",
