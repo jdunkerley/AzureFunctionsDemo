@@ -28,7 +28,7 @@ function parseTrains(trainObjects, endStation) {
     }
 
     if (endStation) {
-      const callingPoints = walkTree(train, ['lt7:subsequentCallingPoints', 'lt7:callingPointList'])['lt7:callingPointList'] || []
+      const callingPoints = walkTree(train, ['lt7:subsequentCallingPoints', 'lt7:callingPointList'])['lt7:callingPoint'] || []
 
       let endIndex = 0;
       while (endIndex < callingPoints.length) {
