@@ -4,18 +4,23 @@ const request = require('request')
 const environment = {}
 
 const sendResponse = (payload, status) => {
-  environment.context.res = {
-    body: `<?xml version="1.0" encoding="UTF-8" ?>
-    <Response>
-        <Message>${payload}</Message>
-    </Response>`,
+  environment.context.log(`Sending ${payload} to ${environment.to} ...`)
+
+  request({
+    url: `https://api.twilio.com/2010-04-01/Accounts/${process.env["TWILIO_SID"]}/Messages.json`,
     headers: {
-      'content-type': 'text/xml'
-    },
-    status: status || 200,
-    isRaw: true
-  }
-  environment.context.done()
+        'Authorization': `Basic ${new Buffer(process.env["TWILIO_SID"] + ':' + process.env["TWILIO_TOKEN"]).toString('base64')}`
+        },
+    method: "POST",
+    form: {To: environment.to, From: environment.from, Body: payload}
+  }, (error, response) => {
+    if (error) {
+      environment.context.log("Error: " + JSON.stringify(error))
+      return
+    }
+
+    environment.context.log(`Sending ${payload} to ${environment.to} ... completed: ${response.body}`)
+  })
 }
 
 const parseTrains = (trains) => {
@@ -59,15 +64,19 @@ module.exports = (context, req) => {
   if (req.body) {
     const body = qs.decode(req.body)
     const payload = (body.Body || '').trim()
+    environment.to = body.From
+    environment.from = body.To
 
     if (payload.match(/^[A-Za-z]{3}$/)) {
       sendTrainSearch(payload.toUpperCase(), '')
     } else if (payload.match(/^[A-Za-z]{3} to [A-Za-z]{3}$/)) {
       sendTrainSearch(payload.substring(0, 3).toUpperCase(), payload.substring(7, 10).toUpperCase())
     } else {
-      sendResponse('Welcome to Trains... Send \'[start code]\' for next 5 departures. Send \'[start code] to [end code]\' to get next 5 trains. Send \'? [Name]\' to find station code.')
+      sendResponse('Welcome to Trains... \r\nSend \'[start code]\' for next 5 departures. \r\nSend \'[start code] to [end code]\' to get next 5 trains.')
     }
   } else {
     sendResponse('Expected to recieve a body', 400)
   }
+
+  context.done()
 }
